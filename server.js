@@ -17,11 +17,11 @@ const typeDefs = gql`
 const resolvers = {
 	Query: {
 		movies: () => [],
-		movie: () => ({id: 1, title: 2}),
+		movie: () => ({id: 1, title: 'American Dreams'}),
 	},
 	Mutation: {
 		addMovie: (_, {id}) => {
-			console.log(id);
+			console.log(`the id is ${id}`);
 			return true;
 		},
 	},
