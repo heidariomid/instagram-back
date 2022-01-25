@@ -19,7 +19,7 @@
   "homepage": "https://github.com/omidheidari88/instagram-back#readme",
   "dependencies": {
     "@prisma/client": "^3.7.0",
-    "apollo-server": "^0.3.3",
+    "apollo-server": "^3.6.2",
     "babel-cli": "^6.26.0",
     "graphql": "^16.2.0"
   },
