@@ -1,18 +1,20 @@
-import { PrismaClient } from "@prisma/client";
+import {PrismaClient} from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// A `main` function so that you can use async/await
-async function main() {
-  const allUsers = await prisma.movie.findMany({});
-  // use `console.dir` to print nested objects
-  console.dir(allUsers, { depth: null });
-}
+// async function main() {
+//   const allUsers = await prisma.movie.findMany({});
+//   // use `console.dir` to print nested objects
+//   console.dir(allUsers, { depth: null });
+// }
+export const findMovies = async () => {
+	// await prisma.movie.create({
+	// 	data: {
+	// 		title: 'Death',
+	// 	},
+	// });
 
-main()
-  .catch((e) => {
-    throw e;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+	const movies = await prisma.movie.findMany({});
+	console.dir(movies, {depth: null});
+	return movies;
+};

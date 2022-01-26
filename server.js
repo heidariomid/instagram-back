@@ -1,4 +1,5 @@
 import {ApolloServer, gql} from 'apollo-server';
+import {findMovies} from './script';
 
 const typeDefs = gql`
 	type Query {
@@ -16,7 +17,8 @@ const typeDefs = gql`
 
 const resolvers = {
 	Query: {
-		movies: () => [],
+		movies: () => findMovies(),
+
 		movie: () => ({id: 1, title: 'American Dreams'}),
 	},
 	Mutation: {
