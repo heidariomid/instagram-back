@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec babel-node ./server.js"
+    "dev": "nodemon --exec babel-node ./server.js",
+    "migrate": "npx prisma migrate dev"
   },
   "repository": {
     "type": "git",
@@ -20,9 +21,12 @@
   "dependencies": {
     "@babel/cli": "^7.16.8",
     "@babel/core": "^7.16.12",
+    "@graphql-tools/schema": "^8.3.1",
     "@prisma/client": "^3.7.0",
     "apollo-server": "^3.6.2",
-    "graphql": "^16.2.0"
+    "dotenv": "^14.3.2",
+    "graphql": "^16.2.0",
+    "graphql-tools": "^8.2.0"
   },
   "devDependencies": {
     "@babel/node": "^7.16.8",
