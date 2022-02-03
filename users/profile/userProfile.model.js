@@ -1,23 +1,32 @@
 import {PrismaClient} from '@prisma/client';
 import {hashPassword} from '../../services/hash';
-import {findToken, verify} from '../../services/token';
+import {createWriteStream} from 'fs';
+import {finished} from 'stream/promises';
+
 const prisma = new PrismaClient();
 
-const userProfile = async (userName, user) => {
-	if (user) {
-		return user;
-	}
-	return await prisma.user.findUnique({where: {userName}});
+const userProfile = async (user) => {
+	return {
+		isUserExist: true,
+		message: 'athurized!',
+		user,
+	};
 };
 
 const updateProfile = async (payload, user) => {
 	try {
+		const {createReadStream, filename, mimetype, encoding} = await payload.avatar;
+		const stream = createReadStream();
+		const out = createWriteStream(process.cwd() + '/uploads/' + user?.id + '-' + filename);
+		stream.pipe(out);
+		await finished(out);
 		const password = payload?.password && (await hashPassword(payload?.password));
 		const firstName = payload?.firstName && payload.firstName;
 		const lastName = payload?.lastName && payload.lastName;
 		const email = payload?.email && payload.email;
 		const userName = payload?.userName && payload.userName;
-
+		const bio = payload?.bio && payload.bio;
+		const avatar = payload?.avatar && `http://localhost:4000/static/${user?.id}-${filename}`;
 		await prisma.user.update({
 			where: {id: user?.id},
 			data: {
@@ -27,6 +36,8 @@ const updateProfile = async (payload, user) => {
 				lastName,
 				email,
 				userName,
+				bio,
+				avatar,
 			},
 		});
 		return {
