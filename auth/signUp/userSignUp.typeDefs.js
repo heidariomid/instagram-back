@@ -3,7 +3,7 @@ import {gql} from 'apollo-server-express';
 const typeDefs = gql`
 	scalar Upload
 	type Mutation {
-		createAccount(firstName: String!, lastName: String, userName: String!, email: String!, password: String!): User
+		createAccount(firstName: String!, lastName: String, userName: String!, email: String!, password: String!): createAccountResult
 	}
 	type File {
 		filename: String!
@@ -20,7 +20,18 @@ const typeDefs = gql`
 		avatar(file: Upload!): File!
 		createdAt: String!
 		updatedAt: String!
-		# singleUpload(file: Upload!): File!
+		following: [User]
+		followers: [User]
+		totalFollowing: Int
+		totalFollowers: Int
+		isMe: Boolean
+		isFollowing: Boolean
+	}
+	type createAccountResult {
+		isSignUpSuccess: Boolean!
+		user: User
+		error: String
+		message: String
 	}
 `;
 

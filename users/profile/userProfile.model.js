@@ -5,10 +5,33 @@ import {finished} from 'stream/promises';
 
 const prisma = new PrismaClient();
 
-const userProfile = async (user) => {
+const userProfile = async ({userName}) => {
+	if (!userName) {
+		return {
+			isUserExist: false,
+			message: 'no valid username provided!!',
+			user: null,
+		};
+	}
+	const user = await prisma.user.findUnique({
+		where: {
+			userName,
+		},
+		include: {
+			following: true,
+			followers: true,
+		},
+	});
+	if (!user) {
+		return {
+			isUserExist: false,
+			message: 'no username found!!',
+			user: null,
+		};
+	}
 	return {
 		isUserExist: true,
-		message: 'athurized!',
+		message: 'success!',
 		user,
 	};
 };
@@ -53,7 +76,19 @@ const updateProfile = async (payload, user) => {
 	}
 };
 
+const isMe = async ({id}, {user}) => id === user.id;
+
+const isFollowing = async ({id}, {user}) => {
+	// const exsist = await prisma.user.findUnique({where: {userName: user.userName}}).following({where: {id}});
+	// return exsist.length !== 0;
+
+	const exsist = await prisma.user.count({where: {userName: user.userName, following: {some: {id}}}});
+	return exsist !== 0;
+};
+
 export default {
 	userProfile,
 	updateProfile,
+	isMe,
+	isFollowing,
 };
