@@ -1,0 +1,14 @@
+import userLoginTypeDefs from './auth/login/userLogin.typeDefs';
+import userLoginResolvers from './auth/login/userLogin.resolvers';
+import userSignUpTypeDefs from './auth/signUp/userSignUp.typeDefs';
+import userSignUpResolvers from './auth/signUp/userSignUp.resolvers';
+import userProfileTypeDefs from './users/profile/userProfile.typeDefs';
+import userProfileResolvers from './users/profile/userProfile.resolvers';
+import followModelResolvers from './users/follow/follow.resolvers';
+import followModelTypeDefs from './users/follow/follow.typeDefs';
+import photosModelResolvers from './photos/photos.resolvers';
+import photosModelTypeDefs from './photos/photos.typeDefs';
+import editphotosModelResolvers from './photos/editPhotos/photos.resolvers';
+import editphotosModelTypeDefs from './photos/editPhotos/photos.typeDefs';
+export const typeDefs = [userProfileTypeDefs, photosModelTypeDefs, userLoginTypeDefs, userSignUpTypeDefs, followModelTypeDefs, editphotosModelTypeDefs];
+export const resolvers = [userProfileResolvers, photosModelResolvers, userLoginResolvers, userSignUpResolvers, followModelResolvers, editphotosModelResolvers];

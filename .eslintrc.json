@@ -1,0 +1,41 @@
+{
+    "env": {
+        "node": true,
+        "es2021": true
+    },
+    "extends": [
+        "standard"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "semi": "off",
+        "indent": "off",
+        "no-trailing-spaces": "off",
+        "eol-last": "off",
+        "arrow-spacing": "off",
+        "brace-style": "off",
+        "space-before-function-paren": "off",
+        "comma-spacing": "off",
+        "object-curly-spacing": "off",
+        "no-multiple-empty-lines": "off",
+        "no-tabs": "off",
+        "space-before-blocks": "off",
+        "padded-blocks": "off",
+        "lines-between-class-members": "off",
+        "quotes": "off",
+        "comma-dangle": "off",
+        "import/first": "off",
+        "promise/param-names": "off",
+        "key-spacing": "off",
+        "no-multi-spaces": "off",
+        "space-infix-ops": "off",
+        "no-empty": "off"
+    }
+}
