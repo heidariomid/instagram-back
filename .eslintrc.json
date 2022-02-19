@@ -36,6 +36,10 @@
         "key-spacing": "off",
         "no-multi-spaces": "off",
         "space-infix-ops": "off",
-        "no-empty": "off"
+        "no-empty": "off",
+        "no-unused-vars": "warn",
+        "no-mixed-spaces-and-tabs": "off",
+        "keyword-spacing": "off",
+        "object-curly-newline": "off"
     }
 }

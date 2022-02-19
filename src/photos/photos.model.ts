@@ -8,10 +8,7 @@ const seePhotos = async (user: User) => {
 };
 
 const searchPhotos = async ({keyword}) => {
-	console.log(keyword);
-	const see = await prisma.photo.findMany({where: {caption: {startsWith: keyword}}});
-	console.log(see);
-	return see;
+	return await prisma.photo.findMany({where: {caption: {startsWith: keyword}}});
 };
 
 const uploadPhoto = async ({file, caption}, user: User) => {

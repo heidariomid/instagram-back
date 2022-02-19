@@ -10,12 +10,7 @@ export const verify = (token) => {
 		console.log(error);
 	}
 };
-export const findToken = (req) => {
-	const {authorization} = req?.headers;
-	Object.keys(req.headers).includes('authorization');
-	if (!('authorization' in req.headers)) {
-		return false;
-	}
+export const findToken = (authorization) => {
 	// const authorization = req.session.token;
 	// if (!authorization) {
 	// 	return false;
