@@ -1,12 +1,13 @@
 import {resolverWrapper} from '../../util/userUtil/user.util';
 import client from './userProfile.model';
 import {GraphQLUpload} from 'graphql-upload';
-const {userProfile, updateProfile, isMe, isFollowing, userPhotos} = client;
+const {userProfile, updateProfile, isMe, isFollowing, userPhotos, userInfo} = client;
 import {Resolvers} from '../../types';
 const resolvers: Resolvers = {
 	Upload: GraphQLUpload,
 	Query: {
 		userProfile: resolverWrapper((_, payload) => userProfile(payload)),
+		userInfo: resolverWrapper((_, payload, {user}) => userInfo(user)),
 	},
 	Mutation: {
 		updateProfile: (_, payload, {user}) => updateProfile(payload, user),

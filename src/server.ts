@@ -15,9 +15,17 @@ async function startServer() {
 	const server = new ApolloServer({
 		schema,
 		context: async (context) => {
+			const user = await fetchUser(context.req?.headers?.authorization);
+
+			if (!user) {
+				return {
+					req: context.req,
+					user: null,
+				};
+			}
 			return {
 				req: context.req,
-				user: await fetchUser(context.req?.headers?.authorization),
+				user,
 			};
 		},
 

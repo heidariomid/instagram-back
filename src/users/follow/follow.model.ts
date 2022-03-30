@@ -74,17 +74,40 @@ const seeFollowers = async ({userName, page}) => {
 		};
 	}
 };
-const followUser = async ({userName}) => {
+const toggleFollowStatus = async ({userName}, user) => {
 	try {
-		const isUserNameValid = await checkUser(userName);
-		if (!isUserNameValid) {
+		const username = await checkUser(userName);
+		if (!username) {
 			return {
 				message: 'something gone wrong!',
 				error: 'no username exist!',
 			};
 		}
+
+		const currentUser = await prisma.user.findUnique({where: {id: user.id}, include: {following: true}});
+		if (currentUser.following.length > 0) {
+			currentUser.following.map(async (followedUser) => {
+				if (followedUser.id === username.id) {
+					await prisma.user.update({
+						where: {id: user.id},
+						data: {
+							following: {
+								disconnect: {
+									userName,
+								},
+							},
+						},
+					});
+					return {
+						isToggleSuccess: true,
+						message: 'unfollow!',
+					};
+				}
+			});
+		}
+
 		await prisma.user.update({
-			where: {id: userName.id},
+			where: {id: user.id},
 			data: {
 				following: {
 					connect: {
@@ -93,16 +116,15 @@ const followUser = async ({userName}) => {
 				},
 			},
 		});
-
 		return {
-			isFollowSuccess: true,
-			message: 'athurized!',
+			isToggleSuccess: true,
+			message: 'success!',
 			error: null,
 		};
 	} catch (error) {
 		return {
-			isFollowSuccess: false,
-			message: 'unathurized!',
+			isToggleSuccess: false,
+			message: 'failed!',
 			error,
 		};
 	}
@@ -122,7 +144,7 @@ const totalFollowers = async ({id}) => {
 
 export default {
 	totalFollowing,
-	followUser,
+	toggleFollowStatus,
 	totalFollowers,
 	seeFollowers,
 	seeFollowing,

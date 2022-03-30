@@ -6,10 +6,10 @@ const typeDefs = gql`
 		seeFollowing(userName: String!, cursor: Int): seeFollowingResult!
 	}
 	type Mutation {
-		followUser(userName: String): followUserResult!
+		toggleFollowStatus(userName: String!): followUserResult!
 	}
 	type followUserResult {
-		isFollowSuccess: Boolean!
+		isToggleSuccess: Boolean!
 		message: String!
 		error: String
 	}

@@ -2,11 +2,13 @@ import {gql} from 'apollo-server-express';
 
 const typeDefs = gql`
 	type Query {
-		userProfile(userName: String): userProfileResult
+		userProfile(userName: String!): userProfileResult!
+		userInfo: User
 	}
 	type Mutation {
 		updateProfile(firstName: String, email: String, password: String, lastName: String, userName: String, avatar: Upload, bio: String): updateProfileResult!
 	}
+
 	type updateProfileResult {
 		isUpdateSuccess: Boolean!
 		message: String!
@@ -29,7 +31,8 @@ const typeDefs = gql`
 		userName: String!
 		email: String!
 		bio: String
-		avatar(file: Upload!): File!
+		# avatar(file: Upload): File
+		avatar: String
 		createdAt: String!
 		updatedAt: String!
 		following: [User]

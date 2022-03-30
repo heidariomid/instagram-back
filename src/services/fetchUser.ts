@@ -4,10 +4,18 @@ const prisma = new PrismaClient();
 
 export const fetchUser = async (authorization) => {
 	const token = findToken(authorization);
+
 	if (!token) {
 		return null;
 	}
-	const {id} = token && verify(token);
-	const user = await prisma?.user?.findUnique({where: {id}});
+	const verification = token && verify(token);
+
+	if (verification === null) {
+		return null;
+	}
+	const user = await prisma?.user?.findUnique({where: {id: verification?.id}});
+	if (!user) {
+		return null;
+	}
 	return user;
 };

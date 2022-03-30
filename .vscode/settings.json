@@ -1,11 +1,11 @@
 {
   "files.exclude": {
-    "public": true,
+    // "public": true,
     ".gitignore": true,
     "node_modules": true,
     "yarn.lock": true,
     "package-lock.json": true,
-    "package.json": true,
+    // "package.json": true,
     ".babelrc": true,
     "index.html": true,
     ".env": true,

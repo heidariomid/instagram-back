@@ -7,7 +7,7 @@ export const verify = (token) => {
 	try {
 		return jwt.verify(token, process.env.JWT_SECRET);
 	} catch (error) {
-		console.log(error);
+		return null;
 	}
 };
 export const findToken = (authorization) => {

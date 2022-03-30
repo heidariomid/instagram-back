@@ -2,9 +2,33 @@ import {PrismaClient} from '@prisma/client';
 import {hashPassword} from '../../services/hash';
 import {createWriteStream} from 'fs';
 import {finished} from 'stream/promises';
+import path from 'path';
 
 const prisma = new PrismaClient();
-
+const userInfo = async ({id}) => {
+	if (!id) {
+		return {
+			user: null,
+		};
+	}
+	const user = await prisma.user.findUnique({
+		where: {
+			id,
+		},
+		include: {
+			following: true,
+			followers: true,
+		},
+	});
+	if (!user) {
+		return {
+			user: null,
+		};
+	}
+	return {
+		...user,
+	};
+};
 const userProfile = async ({userName}) => {
 	if (!userName) {
 		return {
@@ -17,6 +41,7 @@ const userProfile = async ({userName}) => {
 		where: {
 			userName,
 		},
+
 		include: {
 			following: true,
 			followers: true,
@@ -38,9 +63,15 @@ const userProfile = async ({userName}) => {
 
 const updateProfile = async (payload, user) => {
 	try {
-		const {createReadStream, filename} = await payload.avatar;
-		const stream = createReadStream();
-		const out = createWriteStream(process.cwd() + '/uploads/' + user?.id + '-' + filename);
+		const ROOT_PATH = path.dirname(require.main.filename);
+		const UPLOAD_PATH = path.join(ROOT_PATH, '/uploads');
+
+		const uploadPath = process.cwd() + '/src/uploads/';
+		const avatarResponse = await payload?.avatar;
+
+		const stream = avatarResponse?.createReadStream();
+		const out = createWriteStream(uploadPath + user?.id + '-' + avatarResponse?.filename);
+
 		stream.pipe(out);
 		await finished(out);
 		const password = payload?.password && (await hashPassword(payload?.password));
@@ -49,7 +80,7 @@ const updateProfile = async (payload, user) => {
 		const email = payload?.email && payload.email;
 		const userName = payload?.userName && payload.userName;
 		const bio = payload?.bio && payload.bio;
-		const avatar = payload?.avatar && `http://localhost:4000/static/${user?.id}-${filename}`;
+		const avatar = payload?.avatar && `${uploadPath}/${user?.id}-${avatarResponse?.filename}`;
 		await prisma.user.update({
 			where: {id: user?.id},
 			data: {
@@ -78,7 +109,16 @@ const updateProfile = async (payload, user) => {
 
 const isMe = async ({id}, {user}) => id === user.id;
 const userPhotos = async ({id}) => {
-	return await prisma.user.findMany({where: {id}});
+	// const photos = await prisma.user.findUnique({where: {id}}).photos();
+	const photos = await prisma.photo.findMany({
+		where: {
+			userId: id,
+		},
+		orderBy: {createdAt: 'desc'},
+	});
+	if (!photos) return null;
+
+	return photos;
 };
 
 const isFollowing = async ({id}, {user}) => {
@@ -95,4 +135,5 @@ export default {
 	isMe,
 	isFollowing,
 	userPhotos,
+	userInfo,
 };

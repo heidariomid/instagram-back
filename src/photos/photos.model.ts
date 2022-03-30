@@ -1,5 +1,7 @@
 import {PrismaClient, User} from '@prisma/client';
+import {createWriteStream} from 'fs';
 import {hashtagHandler} from '../util/photoUtil/photo.util';
+import {finished} from 'stream/promises';
 
 const prisma = new PrismaClient();
 
@@ -12,6 +14,16 @@ const searchPhotos = async ({keyword}) => {
 };
 
 const uploadPhoto = async ({file, caption}, user: User) => {
+	const uploadPath = process.cwd() + '/src/uploads/';
+	const fileService = await file;
+	const stream = fileService?.createReadStream();
+	const out = createWriteStream(uploadPath + user?.id + '-' + fileService?.filename);
+
+	stream.pipe(out);
+	await finished(out);
+
+	const fileUpload = file && `${uploadPath}/${user?.id}-${fileService?.filename}`;
+
 	let hashtagsObj = [];
 	if (caption) {
 		hashtagsObj = hashtagHandler(caption);
@@ -21,7 +33,7 @@ const uploadPhoto = async ({file, caption}, user: User) => {
 			user: {
 				connect: {id: user.id},
 			},
-			file,
+			file: fileUpload,
 			caption,
 			...(hashtagsObj.length > 0 && {
 				hashtags: {
@@ -33,7 +45,8 @@ const uploadPhoto = async ({file, caption}, user: User) => {
 };
 
 const userPhoto = async ({userId}) => {
-	return await prisma.user.findUnique({where: {id: userId}});
+	const user = await prisma.user.findUnique({where: {id: userId}});
+	return user;
 };
 const hashtagsPhoto = async ({id}) => {
 	return await prisma.hashtag.findMany({where: {photos: {some: {id}}}});
@@ -105,6 +118,42 @@ const seePhotoLikes = async ({id}) => {
 	const likes = await prisma.like.findMany({where: {photoId: id}, select: {user: true}});
 	return likes.map((like) => like.user);
 };
+const seeFeed = async ({id}) => {
+	return await prisma.photo.findMany({
+		where: {
+			OR: [{user: {followers: {some: {id}}}}, {userId: id}],
+		},
+		orderBy: {createdAt: 'desc'},
+	});
+};
+const isLiked = async ({id}, user) => {
+	if (!user) return false;
+	const isLiked = await prisma.like.findUnique({
+		where: {
+			userId_photoId: {
+				userId: user?.id,
+				photoId: id,
+			},
+		},
+		select: {
+			id: true,
+		},
+	});
+	if (isLiked) return true;
+	return false;
+};
+const commentsNumber = async ({id}) => {
+	return await prisma.comment.count({where: {photoId: id}});
+};
+const comments = async ({id}) => {
+	// const comments = await prisma.photo.findUnique({where: {id}}).comments();
+	const comments = await prisma.comment.findMany({where: {photoId: id}, include: {user: true}});
+	if (!comments) return null;
+	return comments;
+};
+
+const isMine = async (parent, user) => parent?.userId === user?.id;
+
 export default {
 	seePhotos,
 	uploadPhoto,
@@ -116,4 +165,9 @@ export default {
 	likePhoto,
 	likes,
 	seePhotoLikes,
+	seeFeed,
+	isLiked,
+	commentsNumber,
+	isMine,
+	comments,
 };
