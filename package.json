@@ -28,6 +28,7 @@
     "bcrypt": "^5.0.1",
     "dotenv": "^14.3.2",
     "express": "^4.17.2",
+    "filestack-js": "^3.25.0",
     "graphql": "^16.2.0",
     "graphql-subscriptions": "^2.0.0",
     "graphql-tools": "^8.2.0",

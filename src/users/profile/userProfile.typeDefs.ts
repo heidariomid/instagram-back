@@ -4,6 +4,7 @@ const typeDefs = gql`
 	type Query {
 		userProfile(userName: String!): userProfileResult!
 		userInfo: User
+		users: [User]
 	}
 	type Mutation {
 		updateProfile(firstName: String, email: String, password: String, lastName: String, userName: String, avatar: Upload, bio: String): updateProfileResult!
@@ -11,6 +12,7 @@ const typeDefs = gql`
 
 	type updateProfileResult {
 		isUpdateSuccess: Boolean!
+		user: User
 		message: String!
 		error: String
 	}

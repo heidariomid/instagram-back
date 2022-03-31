@@ -1,10 +1,19 @@
-import {PrismaClient} from '@prisma/client';
+import {PrismaClient, User} from '@prisma/client';
 import {hashPassword} from '../../services/hash';
 import {createWriteStream} from 'fs';
 import {finished} from 'stream/promises';
 import path from 'path';
+import {photoUploadHandler} from '../../util/photoUtil/upload.util';
+import {client} from '../../services/filesUploader';
 
 const prisma = new PrismaClient();
+const users = async ({id}) => {
+	const users = await prisma.user.findMany();
+
+	if (!users) return null;
+
+	return users;
+};
 const userInfo = async ({id}) => {
 	if (!id) {
 		return {
@@ -61,26 +70,20 @@ const userProfile = async ({userName}) => {
 	};
 };
 
-const updateProfile = async (payload, user) => {
+const updateProfile = async (payload, user: User) => {
 	try {
-		const ROOT_PATH = path.dirname(require.main.filename);
-		const UPLOAD_PATH = path.join(ROOT_PATH, '/uploads');
+		const fileUpload = await photoUploadHandler(payload?.avatar, user);
 
-		const uploadPath = process.cwd() + '/src/uploads/';
-		const avatarResponse = await payload?.avatar;
+		const uploadPhotoToFilestack = await client.upload(fileUpload);
 
-		const stream = avatarResponse?.createReadStream();
-		const out = createWriteStream(uploadPath + user?.id + '-' + avatarResponse?.filename);
-
-		stream.pipe(out);
-		await finished(out);
 		const password = payload?.password && (await hashPassword(payload?.password));
 		const firstName = payload?.firstName && payload.firstName;
 		const lastName = payload?.lastName && payload.lastName;
 		const email = payload?.email && payload.email;
 		const userName = payload?.userName && payload.userName;
 		const bio = payload?.bio && payload.bio;
-		const avatar = payload?.avatar && `${uploadPath}/${user?.id}-${avatarResponse?.filename}`;
+		const avatarUrl = payload?.avatar && uploadPhotoToFilestack;
+
 		await prisma.user.update({
 			where: {id: user?.id},
 			data: {
@@ -91,7 +94,7 @@ const updateProfile = async (payload, user) => {
 				email,
 				userName,
 				bio,
-				avatar,
+				avatar: avatarUrl?.url,
 			},
 		});
 		return {
@@ -136,4 +139,5 @@ export default {
 	isFollowing,
 	userPhotos,
 	userInfo,
+	users,
 };

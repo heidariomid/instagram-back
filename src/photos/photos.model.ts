@@ -1,7 +1,7 @@
 import {PrismaClient, User} from '@prisma/client';
-import {createWriteStream} from 'fs';
+import {client} from '../services/filesUploader';
 import {hashtagHandler} from '../util/photoUtil/photo.util';
-import {finished} from 'stream/promises';
+import {photoUploadHandler} from '../util/photoUtil/upload.util';
 
 const prisma = new PrismaClient();
 
@@ -13,28 +13,21 @@ const searchPhotos = async ({keyword}) => {
 	return await prisma.photo.findMany({where: {caption: {startsWith: keyword}}});
 };
 
-const uploadPhoto = async ({file, caption}, user: User) => {
-	const uploadPath = process.cwd() + '/src/uploads/';
-	const fileService = await file;
-	const stream = fileService?.createReadStream();
-	const out = createWriteStream(uploadPath + user?.id + '-' + fileService?.filename);
-
-	stream.pipe(out);
-	await finished(out);
-
-	const fileUpload = file && `${uploadPath}/${user?.id}-${fileService?.filename}`;
+const uploadPhoto = async (payload, user: User) => {
+	const fileUpload = await photoUploadHandler(payload?.file, user);
+	const uploadPhotoToFilestack = await client.upload(fileUpload);
 
 	let hashtagsObj = [];
-	if (caption) {
-		hashtagsObj = hashtagHandler(caption);
+	if (payload?.caption) {
+		hashtagsObj = hashtagHandler(payload?.caption);
 	}
 	return prisma.photo.create({
 		data: {
 			user: {
 				connect: {id: user.id},
 			},
-			file: fileUpload,
-			caption,
+			file: uploadPhotoToFilestack?.url ? uploadPhotoToFilestack?.url : '',
+			caption: payload?.caption,
 			...(hashtagsObj.length > 0 && {
 				hashtags: {
 					connectOrCreate: hashtagsObj,
