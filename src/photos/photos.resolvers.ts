@@ -1,6 +1,6 @@
 import {resolverWrapper} from '../util/userUtil/user.util';
 import client from './photos.model';
-const {uploadPhoto, userPhoto, hashtagsPhoto, hashtagPhoto, searchPhotos, totalPhotos, seePhotos, likePhoto, seePhotoLikes, likes, seeFeed, isLiked, commentsNumber, isMine, comments} = client;
+const {uploadPhoto, userPhoto, hashtagsPhoto, hashtagPhoto, searchPhotos, totalPhotos, seePhotos, likePhoto, seePhotoLikes, likes, seeFeed, isLiked, commentsNumber, isMine, comments, deletePhoto} = client;
 const resolvers = {
 	Query: {
 		seePhotos: resolverWrapper((_, payload, {user}) => seePhotos(user)),
@@ -11,6 +11,7 @@ const resolvers = {
 	Mutation: {
 		uploadPhoto: resolverWrapper((_, payload, {user}) => uploadPhoto(payload, user)),
 		likePhoto: resolverWrapper((_, payload, {user}) => likePhoto(payload, user)),
+		deletePhoto: resolverWrapper((_, payload) => deletePhoto(payload)),
 	},
 	Photo: {
 		user: (parent) => userPhoto(parent),

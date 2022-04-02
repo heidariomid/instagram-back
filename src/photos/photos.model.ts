@@ -14,8 +14,8 @@ const searchPhotos = async ({keyword}) => {
 };
 
 const uploadPhoto = async (payload, user: User) => {
-	const fileUpload = await photoUploadHandler(payload?.file, user);
-	const uploadPhotoToFilestack = await client.upload(fileUpload);
+	// const fileUpload = await photoUploadHandler(payload?.file, user);
+	// const uploadPhotoToFilestack = await client.upload(fileUpload);
 
 	let hashtagsObj = [];
 	if (payload?.caption) {
@@ -26,7 +26,7 @@ const uploadPhoto = async (payload, user: User) => {
 			user: {
 				connect: {id: user.id},
 			},
-			file: uploadPhotoToFilestack?.url ? uploadPhotoToFilestack?.url : '',
+			file: payload?.file ? payload?.file : '',
 			caption: payload?.caption,
 			...(hashtagsObj.length > 0 && {
 				hashtags: {
@@ -51,6 +51,7 @@ const hashtagPhoto = async ({id}, {page}) => {
 const totalPhotos = async ({id}) => {
 	return await prisma.photo.count({where: {hashtags: {some: {id}}}});
 };
+
 const likePhoto = async ({id}, user: User) => {
 	const photo = await prisma.photo.findUnique({where: {id}});
 	if (!photo) {
@@ -147,6 +148,24 @@ const comments = async ({id}) => {
 
 const isMine = async (parent, user) => parent?.userId === user?.id;
 
+const deletePhoto = async ({id}) => {
+	try {
+		const photo = await prisma.photo.delete({where: {id}});
+		if (!photo) {
+			return {
+				isPhotoDeleted: false,
+				error: 'no photo found!',
+			};
+		}
+		return {isPhotoDeleted: true};
+	} catch (err) {
+		return {
+			isPhotoDeleted: false,
+			error: 'photo with this ID dosent exist!',
+		};
+	}
+};
+
 export default {
 	seePhotos,
 	uploadPhoto,
@@ -163,4 +182,5 @@ export default {
 	commentsNumber,
 	isMine,
 	comments,
+	deletePhoto,
 };

@@ -8,8 +8,9 @@ const typeDefs = gql`
 		seeFeed: [Photo]
 	}
 	type Mutation {
-		uploadPhoto(file: Upload!, caption: String!): Photo
+		uploadPhoto(file: String!, caption: String): Photo
 		likePhoto(id: Int!): likePhotoResult!
+		deletePhoto(id: Int!): deletePhotoResult!
 	}
 	type Photo {
 		id: Int!
@@ -42,6 +43,10 @@ const typeDefs = gql`
 	}
 	type likePhotoResult {
 		isLikeSuccess: Boolean!
+		error: String
+	}
+	type deletePhotoResult {
+		isPhotoDeleted: Boolean!
 		error: String
 	}
 `;
