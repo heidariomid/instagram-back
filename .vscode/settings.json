@@ -8,7 +8,7 @@
     // "package.json": true,
     ".babelrc": true,
     "index.html": true,
-    ".env": true,
+    // ".env": true,
     "tsconfig.json": true,
     // ".eslintrc.json": true
   }
