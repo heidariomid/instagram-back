@@ -9,7 +9,7 @@
     ".babelrc": true,
     "index.html": true,
     // ".env": true,
-    "tsconfig.json": true,
+    // "tsconfig.json": true,
     // ".eslintrc.json": true
   }
 }
