@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:prod": "",
     "dev": "nodemon --exec ts-node ./src/server.ts --ext ts,js",
     "migrate": "npx prisma migrate dev"
   },
@@ -35,6 +34,7 @@
     "graphql-tools": "^8.2.0",
     "graphql-upload": "^13.0.0",
     "jsonwebtoken": "^8.5.1",
+    "nodemon": "^2.0.15",
     "stream": "^0.0.2",
     "subscriptions-transport-ws": "^0.11.0"
   },
