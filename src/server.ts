@@ -67,9 +67,9 @@ async function startServer() {
 		},
 	);
 
-	await new Promise((r: any) => httpServer.listen({port: process.env.SERVER_PORT}, r));
+	await new Promise((r: any) => httpServer.listen({port: process.env.PORT}, r));
 
-	console.log(`🚀 Server ready ${server.graphqlPath} port ${process.env.SERVER_PORT}`);
+	console.log(`🚀 Server ready ${server.graphqlPath} port ${process.env.PORT}`);
 }
 
 startServer();
