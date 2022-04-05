@@ -1,2 +1,2 @@
 web: npm run dev
-web: npm run migrate:production
+# web: npm run migrate:production
